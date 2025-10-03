@@ -20,6 +20,15 @@
 - hosts: wbserver
   become: true
   tasks:
+
+    - name: copy default html file for site
+      copy:
+        src: default_site.html
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: 0644
+
     - name: install apache and php for Ubuntu servers
       tags: apache,apache2,ubuntu
       apt:
@@ -49,6 +58,23 @@
 - hosts: db_server
   become: true
   tasks:
+
+  - name: install httpd on CentOS
+    yum:
+      name: httpd
+      state: present
+  - name: copy default html file for CentOS
+    copy:
+      src: files/default_site.html
+      dest: /var/www/html/index.html
+      owner: root
+      group: root
+      mode: '0644'
+  - name: start and enable httpd
+    service:
+      name: httpd
+      state: started
+      enabled: true
 
   - name: install mariadb package (CentOS)
     tags: centos, db,mariadb
